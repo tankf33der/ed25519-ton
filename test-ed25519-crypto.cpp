@@ -363,6 +363,7 @@ bool mike128() {
 
   for(int i = 0; i < 256; i++) {
 
+	std::memset(zero64, 0, 64);
   	m[0] = i;
 	ok = PubK1.check_message_signature(zero64, m, 1);
 	std::cout << "ok " << i << " " << ok << std::endl;
