@@ -31,6 +31,7 @@
 #include <cstring>
 
 #include "ellcurve/Ed25519.h"
+#include "wycheproof.h"
 
 static void my_assert_impl(bool cond, const char* str, const char* file, int line) {
   if (!cond) {
@@ -208,6 +209,10 @@ unsigned char zero64[64] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 
+unsigned char wPub [32] = {
+	125,77,14,127,97,83,166,155,98,66,181,34,171,190,230,133,253,164,66,15,136,52,177,8,195,189,174,54,158,245,73,250
+};
+
 
 bool test_ed25519_crypto() {
   std::cout << "************** Testing Curve25519 / Ed25519 cryptographic primitives ************\n";
@@ -330,8 +335,8 @@ bool mike() {
   PubK1.export_public_key(tkey);
   std::cout << "PubK1.public_key = " << buffer_to_hex(tkey) << std::endl;
   
-  ok = PubK1.check_message_signature(signature, (const unsigned char*)"", 0);
-  std::cout << "PubK1.check_signature= ok? " << ok << std::endl;
+  ok = PubK1.check_message_signature(zero64, (const unsigned char*)"", 0);
+  std::cout << "must be zero! => " << ok << std::endl;
   //must be ok = 0;
   //my_assert(ok);
   std::cout << "********* fin\n\n"; 
@@ -353,13 +358,14 @@ bool mike128() {
  PubK1.export_public_key(tkey);
  std::cout << "PubK1.public_key = " << buffer_to_hex(tkey) << std::endl;
  print_buffer(tkey);
+ std::cout << std::endl;
  
 
   for(int i = 0; i < 256; i++) {
-  	
+
   	m[0] = i;
-	  ok = PubK1.check_message_signature(signature, m, 1);
-	  std::cout << "ok " << ok << std::endl;
+	ok = PubK1.check_message_signature(zero64, m, 1);
+	std::cout << "ok " << i << " " << ok << std::endl;
   }
 	
   std::cout << "********* mike128\n\n";
@@ -367,11 +373,23 @@ bool mike128() {
   return true;
 }
 
+/*
+// part of wych
+bool wych() {
+    std::cout << "wych start\n\n";
+	unsigned char signature[64]
+    
+    std::cout << "wych fin\n\n";
+	return true;
+}
+*/
+
 
 int main(void) {
   //test_ed25519_impl();
-  test_ed25519_crypto();
-  mike();
+  //test_ed25519_crypto();
+  //mike();
   mike128();
+  //wych();
   return 0;
 }
