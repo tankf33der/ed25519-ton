@@ -374,23 +374,30 @@ bool mike128() {
   return true;
 }
 
-/*
+
 // part of wych
 bool wych() {
     std::cout << "wych start\n\n";
-	unsigned char signature[64]
-    
+	unsigned char signature[64];
+	crypto::Ed25519::PublicKey PubK1(wPub);
+	bool ok;
+	
+ 	for (int i = 0; i < 20; i++) {
+ 	    std::memset(zero64, 0, 64);
+ 		ok = PubK1.check_message_signature(zero64, (const unsigned char*)"?", 1);
+		std::cout << "ok -> " << ok << std::endl; 
+ 	}   
     std::cout << "wych fin\n\n";
 	return true;
 }
-*/
+
 
 
 int main(void) {
   //test_ed25519_impl();
   //test_ed25519_crypto();
   //mike();
-  mike128();
-  //wych();
+  //mike128();
+  wych();
   return 0;
 }
