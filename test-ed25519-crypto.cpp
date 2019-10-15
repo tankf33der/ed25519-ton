@@ -382,6 +382,9 @@ bool wych() {
 	crypto::Ed25519::PublicKey PubK1(wPub);
 	bool ok;
 
+    // must be 1
+	unsigned char ff[64] = {135, 147, 80, 4, 85, 67, 188, 20, 237, 44, 8, 147, 155, 104, 195, 13, 34, 37, 29, 131, 224, 24, 202, 203, 175, 12, 157, 122, 72, 219, 87, 126, 128, 189, 247, 108, 233, 158, 89, 38, 118, 43, 193, 59, 123, 52, 131, 38, 10, 94, 246, 61, 7, 227, 75, 88, 235, 156, 20, 98, 26, 201, 47, 0};
+
 	ok = true;	
  	for (int i = 0; i < 20; i++) {
  	    //std::memset(zero64, 0, 64);
@@ -389,6 +392,11 @@ bool wych() {
 		std::cout << "ok -> " << ok << std::endl; 
  	}   
     std::cout << "wych fin\n\n";
+
+
+	ok = PubK1.check_message_signature(ff, (const unsigned char*)"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", 65);
+	std::cout << "ok -> " << ok << std::endl;
+
 	return true;
 }
 
