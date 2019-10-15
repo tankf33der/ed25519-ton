@@ -32,6 +32,7 @@
 
 #include "ellcurve/Ed25519.h"
 #include "wycheproof.h"
+#include "vectors.h"
 
 static void my_assert_impl(bool cond, const char* str, const char* file, int line) {
   if (!cond) {
@@ -400,6 +401,28 @@ bool wych() {
 	return true;
 }
 
+bool full() {
+	bool ok;
+	
+	for (int i = 0; i < nb_ed_25519_check_vectors; i += 4) {
+		ok = false;
+		crypto::Ed25519::PublicKey pub(ed_25519_check_vectors[i]);
+
+		ok = pub.check_message_signature(ed_25519_check_vectors[i+2], ed_25519_check_vectors[i+1], ed_25519_check_sizes[i+1]);
+		std::cout << i << " " << ok << std::endl;	
+		
+				
+	}
+/*
+	ok = false;
+	crypto::Ed25519::PublicKey pub(ed_25519_check_vectors[0]);
+	ok = pub.check_message_signature(ed_25519_check_vectors[2], ed_25519_check_vectors[1], ed_25519_check_sizes[1]);
+	std::cout << ok << std::endl;;
+	std::cout << ed_25519_check_vectors[3][0] << std::endl;
+	//print_buffer(ed_25519_check_vectors[0+2]);
+*/
+	return true;
+}
 
 
 int main(void) {
@@ -407,6 +430,7 @@ int main(void) {
   //test_ed25519_crypto();
   //mike();
   //mike128();
-  wych();
+  //wych();
+  full();
   return 0;
 }
