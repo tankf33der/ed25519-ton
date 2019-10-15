@@ -49,6 +49,16 @@ void print_buffer(const unsigned char buffer[32]) {
   }
 }
 
+void print_buffer64(const unsigned char buffer[64]) {
+  for (int i = 0; i < 64; i++) {
+    char buff[4];
+    sprintf(buff, "%02x", buffer[i]);
+    std::cout << buff;
+  }
+}
+
+
+
 std::string buffer_to_hex(const unsigned char* buffer, std::size_t size = 32) {
   const char* hex = "0123456789ABCDEF";
   std::string res(2 * size, '\0');
@@ -210,11 +220,6 @@ unsigned char zero64[64] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 
-unsigned char wPub [32] = {
-	125,77,14,127,97,83,166,155,98,66,181,34,171,190,230,133,253,164,66,15,136,52,177,8,195,189,174,54,158,245,73,250
-};
-
-
 bool test_ed25519_crypto() {
   std::cout << "************** Testing Curve25519 / Ed25519 cryptographic primitives ************\n";
   crypto::Ed25519::PrivateKey PK1, PK2, PK3, PK4, PK5;
@@ -348,25 +353,17 @@ bool mike128() {
 
   std::cout << "********* mike128\n\n";
   
-
   zero32[31] = 128;
-  crypto::Ed25519::PublicKey PubK1(zero32);
-  unsigned char signature[64];
-  unsigned char tkey[32];
   unsigned char m[1];
   bool ok;
 
- PubK1.export_public_key(tkey);
- std::cout << "PubK1.public_key = " << buffer_to_hex(tkey) << std::endl;
- print_buffer(tkey);
- std::cout << std::endl;
- 
-
   for(int i = 0; i < 256; i++) {
-
-	std::memset(zero64, 0, 64);
+    ok = false;
+    std::memset(zero64, 0, 64);
   	m[0] = i;
-	ok = PubK1.check_message_signature(zero64, m, 1);
+
+	crypto::Ed25519::PublicKey pub(zero32);
+	ok = pub.check_message_signature(zero64, m, 1);
 	std::cout << "ok " << i << " " << ok << std::endl;
   }
 	
@@ -376,51 +373,19 @@ bool mike128() {
 }
 
 
-// part of wych
-bool wych() {
-    std::cout << "wych start\n\n";
-	//unsigned char signature[64];
-	crypto::Ed25519::PublicKey PubK1(wPub);
-	bool ok;
-
-    // must be 1
-	unsigned char ff[64] = {135, 147, 80, 4, 85, 67, 188, 20, 237, 44, 8, 147, 155, 104, 195, 13, 34, 37, 29, 131, 224, 24, 202, 203, 175, 12, 157, 122, 72, 219, 87, 126, 128, 189, 247, 108, 233, 158, 89, 38, 118, 43, 193, 59, 123, 52, 131, 38, 10, 94, 246, 61, 7, 227, 75, 88, 235, 156, 20, 98, 26, 201, 47, 0};
-
-	ok = true;	
- 	for (int i = 0; i < 20; i++) {
- 	    //std::memset(zero64, 0, 64);
- 		ok = PubK1.check_message_signature(w[i], (const unsigned char*)"?", 1);
-		std::cout << "ok -> " << ok << std::endl; 
- 	}   
-    std::cout << "wych fin\n\n";
-
-
-	ok = PubK1.check_message_signature(ff, (const unsigned char*)"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", 65);
-	std::cout << "ok -> " << ok << std::endl;
-
-	return true;
-}
-
 bool full() {
 	bool ok;
-	
+	int j = 0;
 	for (int i = 0; i < nb_ed_25519_check_vectors; i += 4) {
 		ok = false;
+		j++;
 		crypto::Ed25519::PublicKey pub(ed_25519_check_vectors[i]);
 
 		ok = pub.check_message_signature(ed_25519_check_vectors[i+2], ed_25519_check_vectors[i+1], ed_25519_check_sizes[i+1]);
-		std::cout << i << " " << ok << std::endl;	
-		
-				
+		print_buffer64(ed_25519_check_vectors[i+2]);	
+		std::cout << " " << j << " " << ok << std::endl; 
+
 	}
-/*
-	ok = false;
-	crypto::Ed25519::PublicKey pub(ed_25519_check_vectors[0]);
-	ok = pub.check_message_signature(ed_25519_check_vectors[2], ed_25519_check_vectors[1], ed_25519_check_sizes[1]);
-	std::cout << ok << std::endl;;
-	std::cout << ed_25519_check_vectors[3][0] << std::endl;
-	//print_buffer(ed_25519_check_vectors[0+2]);
-*/
 	return true;
 }
 
@@ -429,8 +394,7 @@ int main(void) {
   //test_ed25519_impl();
   //test_ed25519_crypto();
   //mike();
-  //mike128();
-  //wych();
-  full();
+  mike128();
+  //full();
   return 0;
 }
