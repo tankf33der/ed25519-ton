@@ -381,7 +381,8 @@ bool wych() {
 	unsigned char signature[64];
 	crypto::Ed25519::PublicKey PubK1(wPub);
 	bool ok;
-	
+
+	ok = true;	
  	for (int i = 0; i < 20; i++) {
  	    std::memset(zero64, 0, 64);
  		ok = PubK1.check_message_signature(zero64, (const unsigned char*)"?", 1);
