@@ -389,6 +389,79 @@ bool full() {
 	return true;
 }
 
+bool x255() {
+	bool ok;
+
+	for (int i = 0; i < nb_x25519_vectors; i += 3) {
+		ok = false;
+		crypto::Ed25519::PrivateKey prv;
+		crypto::Ed25519::PublicKey  pub(x25519_vectors[i+1]);
+		unsigned char shr[32];
+	
+	
+		prv.import_private_key(x25519_vectors[i+0]);
+		ok = prv.compute_shared_secret(shr, pub);
+		print_buffer(shr);
+		std::cout << std::endl;
+		print_buffer(x25519_vectors[i+2]);
+		std::cout << std::endl;
+		//print_buffer(x25519_vectors[i+0]);
+		//std::cout << std::endl;
+		//print_buffer(x25519_vectors[i+1]);
+		std::cout << std::endl;
+		//std::cout << ok << std::endl;
+	}
+	
+	return true;	
+}
+
+bool x255rfc() {
+	bool ok;
+	unsigned char priv[32];
+	unsigned char publ[32];
+	unsigned char shar[32];
+
+	std::memset(priv, 0, 32);
+	std::memset(publ, 0, 32);
+	priv[0] = 9;
+	publ[0] = 9;
+	
+	crypto::Ed25519::PrivateKey prv;
+	crypto::Ed25519::PublicKey  pub(publ);
+
+	prv.import_private_key(priv);
+	ok = prv.compute_shared_secret(shar, pub);
+	print_buffer(shar);
+
+	std::cout << std::endl;
+
+	auto& E = ellcurve::Curve25519();
+	  auto u =
+	      //arith::Bignum(arith::dec_string{"8883857351183929894090759386610649319417338800022198945255395922347792736741"});
+	      arith::Bignum(arith::dec_string{"9"});
+	  //u[255] = 0;
+	  auto n =
+	      //arith::Bignum(arith::dec_string{"35156891815674817266734212754503633747128614016119564763269015315466259359304"});
+	      arith::Bignum(arith::dec_string{"9"});
+	  //n[255] = 0; n[254] = 1;
+	  //n[0] = n[1] = n[2] = 0;
+	  auto umodp = arith::Residue(u, E.get_base_ring());
+	  auto nP = E.power_xz(umodp, n);
+	  std::cout << "u(P) = " << u.to_hex() << std::endl;
+	  std::cout << "n = " << n.to_hex() << std::endl;
+	  std::cout << "u(nP) = " << nP.get_u().extract().to_hex() << std::endl;
+	  unsigned char buffer[32];
+	  std::memset(buffer, 0, 32);
+	  nP.export_point_u(buffer);
+	  std::cout << "u(nP) export = " << buffer_to_hex(buffer) << std::endl;
+	  my_assert(!std::memcmp(buffer, rfc7748_output, 32));
+	
+	  std::cout << "********* ok\n\n";
+	
+	
+	return true;
+}
+
 
 int main(void) {
   //test_ed25519_impl();
@@ -396,5 +469,7 @@ int main(void) {
   //mike();
   //mike128();
   //full();
+  //x255();
+  //x255rfc();
   return 0;
 }
