@@ -394,7 +394,7 @@ int main(void) {
   //test_ed25519_impl();
   //test_ed25519_crypto();
   //mike();
-  mike128();
+  //mike128();
   //full();
   return 0;
 }

@@ -9,8 +9,6 @@ all:
 	g++ *.o -o mike.out -lcrypto
 	./mike.out
 
-	
 clean:
 	rm -rf *.o
 	rm -rf *.out
-	
