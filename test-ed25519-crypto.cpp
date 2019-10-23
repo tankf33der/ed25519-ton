@@ -33,6 +33,7 @@
 #include "ellcurve/Ed25519.h"
 #include "wycheproof.h"
 #include "vectors.h"
+#include "sign-input.h"
 
 static void my_assert_impl(bool cond, const char* str, const char* file, int line) {
   if (!cond) {
