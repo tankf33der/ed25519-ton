@@ -463,6 +463,36 @@ bool x255rfc() {
 	return true;
 }
 
+bool sign_input () {
+	bool ok;
+
+	std::cout << "*** sign_input()\n\n";
+	for (int i = 0, j = 0; i < nb_si; j++, i += 4) {
+		ok = false;
+		crypto::Ed25519::PrivateKey SK;
+		crypto::Ed25519::PublicKey pub(si_vectors[i+1]);
+		unsigned char pub_export[32];
+		unsigned char signature[64];
+
+		// 1
+		SK.import_private_key(si_vectors[i+0]);
+		SK.export_public_key(pub_export);
+		my_assert(!std::memcmp(pub_export, si_vectors[i+1], 32));
+
+		// 2
+		ok = SK.sign_message(signature, si_vectors[i+2], j);
+		my_assert(ok);
+		my_assert(!std::memcmp(signature, si_vectors[i+3], 64));
+
+		// 3
+		ok = false;
+		ok = pub.check_message_signature(signature, si_vectors[i+2], j);
+		my_assert(ok);		
+	}
+	std::cout << "*** OK\n\n";
+	return true;
+}
+
 
 int main(void) {
   //test_ed25519_impl();
@@ -472,5 +502,6 @@ int main(void) {
   //full();
   //x255();
   //x255rfc();
+  sign_input();
   return 0;
 }
