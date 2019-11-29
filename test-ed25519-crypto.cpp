@@ -499,9 +499,9 @@ int main(void) {
   //test_ed25519_crypto();
   //mike();
   //mike128();
-  //full();
+  full();
   //x255();
   //x255rfc();
-  sign_input();
+  //sign_input();
   return 0;
 }
